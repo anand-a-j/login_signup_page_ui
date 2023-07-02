@@ -19,7 +19,7 @@ class LoginSignupPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/login_image.png'),
+            Image.asset('assets/login_image.png',fit: BoxFit.cover,width: 300,height: 300,),
             Column(
               children: [
                 Padding(
