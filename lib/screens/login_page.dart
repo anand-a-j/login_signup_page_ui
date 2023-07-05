@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:login_signup_ui/screens/home_page.dart';
 import 'package:login_signup_ui/screens/signup_page.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  final _nameController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  void vaildatingNameAndPassword(name, password, context) {
+    String userName = 'admin@gmail.com';
+    String password = '123456';
+    if (_nameController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      if (userName == _nameController.text && password == _passwordController.text) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (ctx) => const HomePage()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Username or password incorrect'),
+            backgroundColor: Colors.red));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Fields must not be empty'),
+          backgroundColor: Colors.red));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +64,9 @@ class LoginPage extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 child: Column(
                   children: [
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
                           hintText: 'Email ID',
                           labelText: 'Email ID',
                           isDense: true,
@@ -50,9 +75,10 @@ class LoginPage extends StatelessWidget {
                     const SizedBox(
                       height: 16,
                     ),
-                    const TextField(
+                    TextField(
+                      controller: _passwordController,
                       obscureText: true,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                           hintText: 'Password',
                           labelText: 'Password',
                           isDense: true,
@@ -69,7 +95,10 @@ class LoginPage extends StatelessWidget {
                         backgroundColor:
                             MaterialStatePropertyAll(Color(0xff0e5746)),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        vaildatingNameAndPassword(
+                            _nameController, _passwordController, context);
+                      },
                       child: const Text(
                         "Login",
                         style: TextStyle(

@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:login_signup_ui/screens/login_page.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
 
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  // To vaildate the entire form
+  final formkey = GlobalKey<FormState>();
+  var _confirmPassword;
+  bool showPassword1 = true;
+  bool showPassword2 = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,8 +24,7 @@ class SignUpPage extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(
-                  left: 18, right: 18, top: 6, bottom: 16
-              ),
+                  left: 18, right: 18, top: 6, bottom: 16),
               child: SizedBox(
                 width: double.infinity,
                 child: Column(
@@ -37,60 +46,127 @@ class SignUpPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-              child: Column(
-                children: [
-                  const TextField(
-                    decoration: InputDecoration(
-                        hintText: 'Email ID',
-                        labelText: 'Email ID',
-                        isDense: true,
-                        border: OutlineInputBorder()),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  const TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                        hintText: 'New Password',
-                        labelText: 'New Password',
-                        isDense: true,
-                        suffixIcon: Icon(Icons.visibility_off),
-                        border: OutlineInputBorder()),
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  const TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                        hintText: 'Confirm New Password',
-                        labelText: 'Confirm New Password',
-                        isDense: true,
-                        suffixIcon: Icon(Icons.visibility_off),
-                        border: OutlineInputBorder()
+              child: Form(
+                key: formkey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      decoration: InputDecoration(
+                          hintText: 'Email ID',
+                          labelText: 'Email ID',
+                          isDense: true,
+                          border: OutlineInputBorder()),
+                      validator: (email) {
+                        if (email!.isEmpty) {
+                          return 'Field must not be empty!';
+                        } else {
+                          if (!email.contains('@') && !email.contains('.')) {
+                            return 'Enter a valid email';
+                          }
+                        }
+                      },
                     ),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  ElevatedButton(
-                    style: const ButtonStyle(
-                      minimumSize:
-                          MaterialStatePropertyAll(Size(double.infinity, 40)
-                          ),
-                      backgroundColor:
-                          MaterialStatePropertyAll(Color(0xff0e5746)),
+                    const SizedBox(
+                      height: 16,
                     ),
-                    onPressed: () {},
-                    child: const Text(
-                      "SignUp",
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold
+                    TextFormField(
+                      textInputAction: TextInputAction.next,
+                      obscureText: showPassword1,
+                      decoration: InputDecoration(
+                          hintText: 'New Password',
+                          labelText: 'New Password',
+                          isDense: true,
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (showPassword1) {
+                                    showPassword1 = false;
+                                  } else {
+                                    showPassword1 = true;
+                                  }
+                                });
+                              },
+                              icon: showPassword1 == true
+                                  ? Icon(Icons.visibility)
+                                  : Icon(Icons.visibility_off)),
+                          border: OutlineInputBorder()),
+                      validator: (password) {
+                        _confirmPassword = password;
+                        if (password!.isEmpty) {
+                          return 'Password must not be empty';
+                        } else {
+                          if (password.length < 6) {
+                            return 'password must be greater than 6 characters';
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    TextFormField(
+                      obscureText: showPassword2,
+                      decoration: InputDecoration(
+                          hintText: 'Confirm New Password',
+                          labelText: 'Confirm New Password',
+                          isDense: true,
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (showPassword2) {
+                                    showPassword2 = false;
+                                  } else {
+                                    showPassword2 = true;
+                                  }
+                                });
+                              },
+                              icon: showPassword2 == true
+                                  ? Icon(Icons.visibility)
+                                  : Icon(Icons.visibility_off)),
+                          border: OutlineInputBorder()),
+                          textInputAction: TextInputAction.continueAction,
+                      validator: (confirmPassword) {
+                        if (confirmPassword!.isEmpty) {
+                          return 'Password must not be empty';
+                        } else {
+                          if (confirmPassword != _confirmPassword) {
+                            return 'Password did not match';
+                          }
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    ElevatedButton(
+                      style: const ButtonStyle(
+                        minimumSize:
+                            MaterialStatePropertyAll(Size(double.infinity, 40)),
+                        backgroundColor:
+                            MaterialStatePropertyAll(Color(0xff0e5746)),
+                      ),
+                      onPressed: () {
+                        var isVaild = formkey.currentState!.validate();
+                        if (isVaild == true) {
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (ctx) => LoginPage()));
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text(
+                              'Successfully Sigin',
+                            ),
+                            backgroundColor: Colors.green,
+                          ));
+                        }
+                      },
+                      child: const Text(
+                        "SignUp",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 25),
@@ -103,7 +179,7 @@ class SignUpPage extends StatelessWidget {
                       padding: EdgeInsets.zero, minimumSize: Size.zero),
                   onPressed: () {
                     Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (ctx) => const LoginPage()));
+                        MaterialPageRoute(builder: (ctx) => LoginPage()));
                   },
                   child: const Text(
                     'Log in',

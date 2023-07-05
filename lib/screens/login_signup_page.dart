@@ -67,7 +67,7 @@ class LoginSignupPage extends StatelessWidget {
                     backgroundColor: MaterialStatePropertyAll(Colors.white)),
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (ctx) => const LoginPage()));
+                      MaterialPageRoute(builder: (ctx) => LoginPage()));
                 },
                 child: const Text(
                   "Login",
